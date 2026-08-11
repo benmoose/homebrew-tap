@@ -5,14 +5,6 @@ class FnUtils < Formula
   sha256 "2f03636b293d88c23006ae3e72d9bca9cf8326d9a50c9db6fb9b791c0e7ff4fa"
   license "GPL-3.0"
 
-  # depends_on "cmake" => :build
-
-  # Additional dependency
-  # resource "" do
-  #   url ""
-  #   sha256 ""
-  # end
-
   def install
     # (pkgshare/"functions").install Dir["src/private/*"]
     # (pkgshare/"functions").install Dir["src/public/*"]
@@ -21,13 +13,12 @@ class FnUtils < Formula
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
 
-    share.install "fn-utils.sh" => "fn-utils"
-    bin.write_env_script share/"fn-utils", fn_names.join(' ')
+    share.install "src/fn-utils.sh"
+
+    (bin/"fn-utils").write_env_script share/"fn-utils.sh", Dir[zsh_function/"*"].map {|fn| File.basename(fn)}, FN_DIR: zsh_function
   end
 
   def post_install
-    ohai "!! fn-names: #{fn_names.join(' ')}"
-
     system "fn-utils"
   end
 
@@ -53,8 +44,6 @@ class FnUtils < Formula
   # executables being tested: `system bin/"program", "do", "something"`.
   # system "false"
   # end
-  
-  private
 
   def fn_names
     Dir[zsh_function/"*"].map {|fn| File.basename(fn)}
