@@ -1,0 +1,62 @@
+class FnUtils < Formula
+  desc "My custom CLI utility functions"
+  homepage "https://github.com/benmoose/homebrew-cli-utils"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.37.tar.gz"
+  sha256 "670aca7d656c3e758b8ac6e313697713fbd6f3e9a439064a50bacd3b11a211b4"
+  license "GPL-3.0"
+
+  # depends_on "cmake" => :build
+
+  # Additional dependency
+  # resource "" do
+  #   url ""
+  #   sha256 ""
+  # end
+
+  def install
+    # (pkgshare/"functions").install Dir["src/private/*"]
+    # (pkgshare/"functions").install Dir["src/public/*"]
+    # pkgshare.install "src/init.sh"
+
+    zsh_function.install Dir["src/private/*"]
+    zsh_function.install Dir["src/public/*"]
+
+    share.install "fn-utils.sh" => "fn-utils"
+    bin.write_env_script share/"fn-utils", fn_names.join(' ')
+  end
+
+  def post_install
+    ohai "!! fn-names: #{fn_names.join(' ')}"
+
+    system "fn-utils"
+  end
+
+  def caveat
+    <<~EOS
+      fn-utils installed!
+      
+      To use add this to your .zshrc:
+        `source fn-utils`
+
+    EOS
+  end
+
+  # test do
+  # `test do` will create, run in and delete a temporary directory.
+  #
+  # This test will fail and we won't accept that! For Homebrew/homebrew-core
+  # this will need to be a test that verifies the functionality of the
+  # software. Run the test with `brew test fn-utils`. Options passed
+  # to `brew install` such as `--HEAD` also need to be provided to `brew test`.
+  #
+  # The installed folder is not in the path, so use the entire path to any
+  # executables being tested: `system bin/"program", "do", "something"`.
+  # system "false"
+  # end
+  
+  private
+
+  def fn_names
+    Dir[zsh_function/"*"].map {|fn| File.basename(fn)}
+  end
+end
