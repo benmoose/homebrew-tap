@@ -1,8 +1,8 @@
 class FnUtils < Formula
   desc "My custom CLI utility functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.39.tar.gz"
-  sha256 "f672f9321b6f6f9a08a446ca8544ec54d231cec0f559f0cf6239b6622fbb35af"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.40.tar.gz"
+  sha256 "9e591e3e171d7dff5eed14fcd8c4dc8074e34c156fe7ba4b8df64e4558d3153f"
   license "GPL-3.0"
 
   def install
@@ -12,10 +12,14 @@ class FnUtils < Formula
 
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
+    
+    inreplace "src/fn-utils.sh", "$1", "#{zsh_function}"
+    bin.install "src/fn-utils.sh" => "fn-utils"
+    # inreplace (bin/"fn-utils"), "$1", "#{zsh_function}"
 
-    share.install "src/fn-utils.sh"
-
-    (bin/"fn-utils").write_env_script share/"fn-utils.sh", Dir[zsh_function/"*"].map {|fn| File.basename(fn)}, FN_DIR: zsh_function
+    # (bin/"fn-utils").write_env_script share/"fn-utils.sh", [zsh_function]
+    (bin/"fn-utils2").write_env_script "src/fn-utils.sh", [zsh_function]
+    # (bin/"fn-utils").write_env_script share/"fn-utils.sh", Dir[zsh_function/"*"].map {|fn| File.basename(fn)}, FN_DIR: zsh_function
   end
 
   def post_install
@@ -27,7 +31,7 @@ class FnUtils < Formula
       fn-utils installed!
       
       To use add this to your .zshrc:
-        `source fn-utils`
+        `source <(fn-utils)`
 
     EOS
   end
@@ -45,7 +49,7 @@ class FnUtils < Formula
   # system "false"
   # end
 
-  def fn_names
-    Dir[zsh_function/"*"].map {|fn| File.basename(fn)}
-  end
+  # def fn_names
+  #   Dir[zsh_function/"*"].map {|fn| File.basename(fn)}
+  # end
 end
