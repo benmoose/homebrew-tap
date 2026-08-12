@@ -1,8 +1,8 @@
 class FnUtils < Formula
   desc "My custom CLI utility functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.40.tar.gz"
-  sha256 "9e591e3e171d7dff5eed14fcd8c4dc8074e34c156fe7ba4b8df64e4558d3153f"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.41.tar.gz"
+  sha256 "6eadf8f37700b84b4be143488e845938485a6fc98ce88428f52cf45b1f4df748"
   license "GPL-3.0"
 
   def install
@@ -15,10 +15,9 @@ class FnUtils < Formula
     
     inreplace "src/fn-utils.sh", "$1", "#{zsh_function}"
     bin.install "src/fn-utils.sh" => "fn-utils"
-    # inreplace (bin/"fn-utils"), "$1", "#{zsh_function}"
 
     # (bin/"fn-utils").write_env_script share/"fn-utils.sh", [zsh_function]
-    (bin/"fn-utils2").write_env_script "src/fn-utils.sh", [zsh_function]
+    # (bin/"fn-utils2").write_env_script "src/fn-utils.sh", [zsh_function]
     # (bin/"fn-utils").write_env_script share/"fn-utils.sh", Dir[zsh_function/"*"].map {|fn| File.basename(fn)}, FN_DIR: zsh_function
   end
 
