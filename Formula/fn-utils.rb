@@ -1,8 +1,8 @@
 class FnUtils < Formula
   desc "My custom CLI utility functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.51.tar.gz"
-  sha256 "88878e5ad21c0a2e2e9473d686837c8146df2a684db31db03699fda3c5713581"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.53.tar.gz"
+  sha256 "d0439108f35d09e7420fa3f593cd688750658cdbc8149ee4c7e001dde6b24571"
   license "GPL-3.0"
 
   def install
