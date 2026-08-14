@@ -1,24 +1,18 @@
 class FnUtils < Formula
   desc "My custom CLI utility functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.46.tar.gz"
-  sha256 "7d5abf2dae486766d220a237c4a1fabc8e0cad5eaa1b5e920710a1cd00ab0a3e"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.51.tar.gz"
+  sha256 "88878e5ad21c0a2e2e9473d686837c8146df2a684db31db03699fda3c5713581"
   license "GPL-3.0"
 
   def install
-    # (pkgshare/"functions").install Dir["src/private/*"]
-    # (pkgshare/"functions").install Dir["src/public/*"]
-    # pkgshare.install "src/init.sh"
+    prefix.install_metafiles
 
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
     
     inreplace "src/fn-utils.sh", "$1", "#{zsh_function}"
     bin.install "src/fn-utils.sh" => "fn-utils"
-
-    # (bin/"fn-utils").write_env_script share/"fn-utils.sh", [zsh_function]
-    # (bin/"fn-utils2").write_env_script "src/fn-utils.sh", [zsh_function]
-    # (bin/"fn-utils").write_env_script share/"fn-utils.sh", Dir[zsh_function/"*"].map {|fn| File.basename(fn)}, FN_DIR: zsh_function
   end
 
   def post_install
