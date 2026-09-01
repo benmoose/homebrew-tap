@@ -1,0 +1,8 @@
+# gvel - List the number of commits ("velocity") per month
+# See https://piechowski.io/post/git-commands-before-reading-code
+
+builtin emulate -L zsh
+
+if ! _git_repo; then return 1; fi
+
+git log --date=format:'%Y-%m' --format='%ad' | sort --reverse | uniq --count

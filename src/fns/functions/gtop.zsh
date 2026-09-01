@@ -1,0 +1,9 @@
+# gtop - List the most changed files over the last year
+# See https://piechowski.io/post/git-commands-before-reading-code
+
+builtin emulate -L zsh
+set -o pipefail
+
+if ! _git_repo; then return 1; fi
+
+git log --format=format: --name-only --since="1 year ago" | sort | uniq -c | sort -nr | head -20

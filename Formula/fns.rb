@@ -1,0 +1,41 @@
+class Fns < Formula
+  desc "Collection of useful Zsh functions"
+  homepage "https://github.com/benmoose/homebrew-tap"
+  url "https://github.com/benmoose/homebrew-tap/archive/refs/tags/v0.0.1.tar.gz"
+  sha256 ""
+  license "GPL-3.0-or-later"
+  head "https://github.com/benmoose/homebrew-tap.git", branch: "main"
+
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+){2})$/i)
+  end
+
+  def install
+    prefix.install_metafiles
+
+    pkgshare.install "src/fns/*.zsh"
+    pkgshare.install "src/fns/data"
+
+    zsh_function.install Pathname.glob("src/fns/functions/**/*.zsh").to_h do |path|
+      return [path, path.basename.sub_ext('')]
+    end
+  end
+
+  def caveats
+    <<~EOS
+      To autoload functions, add this to your profile:
+        source #{opt_pkgshare}/init.zsh
+    EOS
+  end
+
+  test do
+    expect(formula.pkgshare).to be_a_directory
+  end
+
+  private
+
+  def installer_name
+    "install-#{name}"
+  end
+end
