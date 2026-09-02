@@ -42,4 +42,4 @@ if ! wait "$pid" 2>/dev/null; then
 	return 1
 fi
 
-printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${DIM}%s...${NS} done\n" "$msg"
+printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${GREEN}%s${NS}\n" "$msg"

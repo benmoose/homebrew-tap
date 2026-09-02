@@ -25,8 +25,8 @@ local -r msg="rebase onto origin/$main_b"
 _spinner "$pid" "$msg"
 
 if wait "${pid}" 2>/dev/null; then
-	printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${DIM}%s...${NS} done\n" "$msg"
+	printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${GREEN}%s${NS}\n" "$msg"
 else
-	printf "${CR}${EL}${BOLD}${RED}×${NS} ${DIM}%s...${NS} error\n" "$msg"
+	printf "${CR}${EL}${BOLD}${RED}✕${NS} ${RED}%s${NS}\n" "$msg"
 	return 1
 fi
