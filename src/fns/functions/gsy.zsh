@@ -1,0 +1,19 @@
+# gsy - (git-sync) Compare to branch at remote.
+
+builtin emulate -L zsh
+set -o pipefail
+
+if ! _git_repo; then return 1; fi
+
+git fetch --no-auto-gc --no-tags --quiet origin || return $?
+
+local -r \
+	head_obj="$(git rev-parse --short --verify -q HEAD)" \
+	upstream_obj="$(git rev-parse --short --verify -q HEAD@{upstream})"
+
+if [[ "$head_obj" != "$upstream_obj" ]]; then
+	[[ "$1" == "-q" ]] || _err "upstream branch diverges, $upstream_obj"
+	return 1
+fi
+
+[[ "$1" == "-q" ]] || printf "up to date with upstream branch\n"

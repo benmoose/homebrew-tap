@@ -1,0 +1,45 @@
+# stage - Stage the local feature branch
+
+builtin emulate -L zsh
+set -o pipefail
+
+if ! _git_repo; then return 1; fi
+
+0="${${(M)0:#/*}:-$PWD/$0}"
+local -r main_b="$(_git_main_branch)" curr_b="$(_git_current_branch)"
+
+if [[ -z "${curr_b}" || "${curr_b}" == "${main_b}" || "${curr_b}" == "staging" ]]; then
+	_err "${0:t}: not on feature branch"
+	return 1
+fi
+
+if ! git show-ref -q --exists --no-tags --no-head refs/remotes/origin/staging; then
+	_err "${0:t}: no remote staging branch"
+	return 1
+fi
+
+local -r msg="Staging $curr_b" _err=$(mktemp -q -t="${0:t}")
+setopt no_monitor
+
+() {
+	git checkout -q staging &&
+		git fetch -q &&
+		git reset -q --hard origin/staging &&
+		git merge -q --no-edit "${curr_b}" &&
+		git push -q origin staging &&
+		git checkout -q "${curr_b}"
+} 2>"${_err}" >/dev/null &
+local -r pid="${!}"
+
+trap 'kill "$pid"; rm -f "$_err"; return 130' INT TERM
+trap 'rm -f "$_err"' EXIT
+
+_spinner "$pid" "$msg"
+
+if ! wait "$pid" 2>/dev/null; then
+	printf "${CR}${EL}"
+	_err "${0:t}: $(<$_err)"
+	return 1
+fi
+
+printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${GREEN}%s${NS}\n" "$msg"
