@@ -16,9 +16,8 @@ class Fns < Formula
     pkgshare.install "src/fns/*.zsh"
     pkgshare.install "src/fns/data"
 
-
     zsh_function.install Pathname.glob("src/fns/functions/**/*.zsh").to_h do |path|
-      return [path, path.basename.sub_ext('')]
+      [path, path.basename.sub_ext("")]
     end
   end
 
