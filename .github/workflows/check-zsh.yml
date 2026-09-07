@@ -1,11 +1,17 @@
-run-name: Check Zsh scripts and functions
+name: Check Zsh syntax
+
+run-name: Check Zsh on ${{ github.ref_type }} ${{ github.event_name }}
 
 on:
   push:
     branches: [main]
     tags: ["v*.*.*"]
+    paths:
+      - '**.zsh'
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - '**.zsh'
 
 permissions:
   contents: read
@@ -23,8 +29,10 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Homebrew
-        id: set-up-homebrew
+        id: homebrew-setup
         uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Homebrew prefix
         uses: Homebrew/actions/cache-homebrew-prefix@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
         with:
@@ -54,9 +62,9 @@ jobs:
         with:
           cache: false
           go-version: "1.27"
-      - name: Install zsh-lint
+      - name: Install linter
         run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
-      - name: Check semantics functions
+      - name: Run linter on zsh functions
         working-directory: ./src/fns
         run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > ${{ runner.temp }}/${{ job.check_run_id }}.json
       - name: Linter output
@@ -64,7 +72,7 @@ jobs:
           NO_COLOR: ${{ true }}
         run: |
           out="${{ runner.temp }}/${{ job.check_run_id }}.json"
-          echo "Check **$(jq '.summary.files' "$out")** files: **$(jq '.summary.errors' "$out")** error(s)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Check **$(jq '.summary.files' "$out")** files: **$(jq '.summary.errors' "$out")** error(s)\n\n```json\n$(jq --indent 2 '.summary' "$out")\n```" >> "$GITHUB_STEP_SUMMARY"
           n=$(jq '.diagnostics | length' "$out")
           for ((i=0; i < n; i++)); do
             [[ $(jq ".diagnostics[$i].severity") == "error" ]] || continue
