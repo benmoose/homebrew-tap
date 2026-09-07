@@ -32,15 +32,18 @@ jobs:
       - name: Set up Homebrew
         id: homebrew-setup
         uses: Homebrew/actions/setup-homebrew@c8707045ccae42888fe98e86f2ee8938bc7cc193 # 2026.08.10.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cache Homebrew Bundler RubyGems
+        id: brew-cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ steps.homebrew-setup.outputs.gems-path }}
           key: ${{ matrix.os }}-rubygems-${{ steps.homebrew-setup.outputs.gems-hash }}
           restore-keys: ${{ matrix.os }}-rubygems-
+
+      - name: Install Homebrew Bundler RubyGems
+        if: steps.brew-cache.outputs.cache-hit != 'true'
+        run: brew install-bundler-gems
 
       - run: brew test-bot --only-cleanup-before
       - run: brew test-bot --only-setup

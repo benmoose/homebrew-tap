@@ -20,18 +20,10 @@ concurrency:
 jobs:
   zsh-check:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/homebrew/brew:main
-      options: --privileged
     name: Check Zsh syntax
     steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      # - name: Set up Homebrew
-      #   uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
       - name: Cache Homebrew prefix
         uses: Homebrew/actions/cache-homebrew-prefix@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
         with:
@@ -39,7 +31,7 @@ jobs:
           uninstall: true
           workflow-key: ${{ github.workflow }}
       - name: Check zsh syntax
-        working-directory: ./src/fns
+        working-directory: src/fns
         run: |
           checked=0; err=0
           while read -r file; do
@@ -54,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Lint Zsh functions
     env:
-      RESULT: "${{ github.ref_name }}-${{ github.sha }}/${{ github.run_attempt }}.json"
+      RESULT_FILE: "${{ github.sha }}-${{ github.run_attempt }}.json"
     steps:
       - uses: actions/checkout@v7
         with:
@@ -67,24 +59,25 @@ jobs:
         run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
       - name: Run linter on zsh functions
         working-directory: ./src/fns
-        run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > ${{ env.RESULT }}
+        run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > "${{ runner.temp }}/${{ env.RESULT_FILE }}"
       - name: Linter output
         env:
           NO_COLOR: ${{ true }}
         run: |
+          res="${{ runner.temp }}/${{ env.RESULT_FILE }}"
           {
-            echo "Check **$(jq '.summary.files' ${{ env.RESULT }})** files: **$(jq '.summary.errors' ${{ env.RESULT }})** error(s)"
+            echo "Check **$(jq '.summary.files' $res)** functions: **$(jq '.summary.errors' $res)** error(s)"
             echo '```json'
-            jq --indent 2 '.summary' ${{ env.RESULT }}
+            jq --indent 2 '.summary' "$res"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          n=$(jq '.diagnostics | length' ${{ env.RESULT }})
+          n=$(jq '.diagnostics | length' "$res")
           for ((i=0; i < n; i++)); do
             [[ $(jq ".diagnostics[$i].severity") == "error" ]] || continue
-            file=$(jq ".diagnostics[$i].file" ${{ env.RESULT }})
-            line=$(jq ".diagnostics[$i].range.start.line" ${{ env.RESULT }})
-            endLine=$(jq ".diagnostics[$i].range.end.line" ${{ env.RESULT }})
-            title=$(jq ".diagnostics[$i].rule" ${{ env.RESULT }})
-            msg=$(jq ".diagnostics[$i].message" <<< ${{ env.RESULT }})
+            file=$(jq ".diagnostics[$i].file" "$res")
+            line=$(jq ".diagnostics[$i].range.start.line" "$res")
+            endLine=$(jq ".diagnostics[$i].range.end.line" "$res")
+            title=$(jq ".diagnostics[$i].rule" "$res")
+            msg=$(jq ".diagnostics[$i].message" <<< "$res")
             echo "::error file=${file},line=${line},endLine=${endLine},title=${title}::${msg}"
           done
