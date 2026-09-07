@@ -30,5 +30,6 @@ class Fns < Formula
 
   test do
     expect(formula.pkgshare).to be_a_directory
+    expect(formula.zsh_function).to be_a_directory
   end
 end

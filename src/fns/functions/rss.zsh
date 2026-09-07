@@ -21,7 +21,7 @@ local -r msg="reset staging branch to origin"
 _spinner "$pid" "$msg" "$YELLOW"
 
 if ! wait "${pid}" 2>/dev/null; then
-	printf "${CR}${EL}${BOLD}${RED}×${NS} ${RED}%s${NS}\n" "${msg}"
+	printf "${CR}${EL}${BOLD}${RED}✕${NS} ${RED}%s${NS}\n" "$msg"
 	return 1
 fi
 
