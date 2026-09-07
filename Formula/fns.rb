@@ -13,13 +13,11 @@ class Fns < Formula
 
   def install
     prefix.install_metafiles
-    pkgshare.install "src/fns/env.zsh", "src/fns/init.zsh"
-    pkgshare.install "src/fns/data"
 
-    zsh_function.install Dir["src/fns/functions/*.zsh"].to_h { |path|
-      [path, path.delete_suffix(".zsh").split("/").last]
-    }
-    zsh_function.install Dir["src/fns/functions/private/*.zsh"].to_h { |path|
+    pkgshare.install "src/fns/env.zsh", "src/fns/init.zsh", "src/fns/data"
+    prefix.install_symlink pkgshare/"init.zsh" => "#{name}-init"
+
+    zsh_function.install Dir["src/fns/functions/*.zsh", "src/fns/functions/private/*.zsh"].to_h { |path|
       [path, path.delete_suffix(".zsh").split("/").last]
     }
   end
@@ -27,7 +25,7 @@ class Fns < Formula
   def caveats
     <<~EOS
       To autoload functions, add this to your profile:
-        source #{opt_prefix}/#{name}.zsh
+        source #{opt_prefix}/#{name}-init
     EOS
   end
 
