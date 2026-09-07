@@ -36,6 +36,7 @@ Install [zsh-lint](https://wiki.zshell.dev/community/zsh_lint) to check zsh scri
 
 ```sh
 go install github.com/z-shell/zsh-lint/cmd/zsh-lint@latest
+zsh-lint path/to/script.zsh
 ```
 
 ### Updating formula
