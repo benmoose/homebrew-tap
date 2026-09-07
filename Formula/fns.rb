@@ -17,10 +17,9 @@ class Fns < Formula
     pkgshare.install "src/fns/env.zsh", "src/fns/init.zsh", "src/fns/data"
     prefix.install_symlink pkgshare/"init.zsh"
 
-    zsh_function.install Dir["src/fns/functions/*.zsh", "src/fns/functions/private/*.zsh"].to_h do |path|
-      inreplace path, "{{PREFIX}}", opt_prefix
-      return [path, path.delete_suffix(".zsh").split("/").last]
-    end
+    zsh_function.install Dir["src/fns/functions/*.zsh", "src/fns/functions/private/*.zsh"].to_h {
+      |path| [path, path.delete_suffix(".zsh").split("/").last]
+    }
   end
 
   def caveats
