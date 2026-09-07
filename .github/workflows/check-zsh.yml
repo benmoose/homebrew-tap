@@ -1,11 +1,17 @@
-run-name: Check Zsh scripts and functions
+name: Check Zsh syntax
+
+run-name: Check Zsh on ${{ github.ref_type }} ${{ github.event_name }}
 
 on:
   push:
     branches: [main]
     tags: ["v*.*.*"]
+    paths:
+      - '**.zsh'
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - '**.zsh'
 
 permissions:
   contents: read

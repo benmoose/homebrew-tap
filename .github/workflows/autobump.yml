@@ -1,5 +1,7 @@
 # brew tap-new uses this file to generate an autobump workflow for the new tap
-name: brew bump
+name: Bump Homebrew Formulae
+
+run-name: Bump formulae to ${{ github.ref_name }} (${{ github.ref_type }} ${{ github.event_name }})
 
 on:
   push:
@@ -11,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
   pull-requests: write
 
 defaults:
@@ -20,22 +23,19 @@ defaults:
 jobs:
   autobump:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - name: Set up Homebrew
-        id: set-up-homebrew
+        id: homebrew-setup
         uses: Homebrew/actions/setup-homebrew@c8707045ccae42888fe98e86f2ee8938bc7cc193 # 2026.08.10.1
 
       - name: Set up Git
-        id: git_setup
+        id: git-setup
         uses: Homebrew/actions/git-user-config@c8707045ccae42888fe98e86f2ee8938bc7cc193 # 2026.08.10.1
 
       - name: Bump formulae
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HOMEBREW_GIT_COMMITTER_NAME: ${{ steps.git_setup.outputs.name }}
-          HOMEBREW_GIT_COMMITTER_EMAIL: ${{ steps.git_setup.outputs.email }}
-          TAP_NAME: ${{ steps.set-up-homebrew.outputs.tap-name }}
+          HOMEBREW_GIT_COMMITTER_NAME: ${{ steps.git-setup.outputs.name }}
+          HOMEBREW_GIT_COMMITTER_EMAIL: ${{ steps.git-setup.outputs.email }}
+          TAP_NAME: ${{ steps.homebrew-setup.outputs.tap-name }}
         run: brew bump --no-fork --open-pr --formulae --bump-synced --tap="$TAP_NAME"
