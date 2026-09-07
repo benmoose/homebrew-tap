@@ -54,6 +54,8 @@ jobs:
   zsh-lint:
     runs-on: ubuntu-latest
     name: Lint Zsh functions
+    env:
+      RESULT: "${{ github.ref_name }}-${{ github.sha }}/${{ github.run_attempt }}.json"
     steps:
       - uses: actions/checkout@v7
         with:
@@ -61,25 +63,29 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           cache: false
-          go-version: "1.27"
+          go-version: '1.27'
       - name: Install linter
         run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
       - name: Run linter on zsh functions
         working-directory: ./src/fns
-        run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > ${{ runner.temp }}/${{ job.check_run_id }}.json
+        run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > ${{ env.RESULT }}
       - name: Linter output
         env:
           NO_COLOR: ${{ true }}
         run: |
-          out="${{ runner.temp }}/${{ job.check_run_id }}.json"
-          echo "Check **$(jq '.summary.files' "$out")** files: **$(jq '.summary.errors' "$out")** error(s)\n\n```json\n$(jq --indent 2 '.summary' "$out")\n```" >> "$GITHUB_STEP_SUMMARY"
-          n=$(jq '.diagnostics | length' "$out")
+          {
+            echo "Check **$(jq '.summary.files' ${{ env.RESULT }})** files: **$(jq '.summary.errors' ${{ env.RESULT }})** error(s)"
+            echo '```json'
+            jq --indent 2 '.summary' ${{ env.RESULT }}
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          n=$(jq '.diagnostics | length' ${{ env.RESULT }})
           for ((i=0; i < n; i++)); do
             [[ $(jq ".diagnostics[$i].severity") == "error" ]] || continue
-            file=$(jq ".diagnostics[$i].file" $out)
-            line=$(jq ".diagnostics[$i].range.start.line" $out)
-            endLine=$(jq ".diagnostics[$i].range.end.line" $out)
-            title=$(jq ".diagnostics[$i].rule" $out)
-            msg=$(jq ".diagnostics[$i].message" <<< $out)
+            file=$(jq ".diagnostics[$i].file" ${{ env.RESULT }})
+            line=$(jq ".diagnostics[$i].range.start.line" ${{ env.RESULT }})
+            endLine=$(jq ".diagnostics[$i].range.end.line" ${{ env.RESULT }})
+            title=$(jq ".diagnostics[$i].rule" ${{ env.RESULT }})
+            msg=$(jq ".diagnostics[$i].message" <<< ${{ env.RESULT }})
             echo "::error file=${file},line=${line},endLine=${endLine},title=${title}::${msg}"
           done
