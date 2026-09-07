@@ -1,6 +1,6 @@
 name: Check Zsh syntax
 
-run-name: Check Zsh on ${{ github.ref_type }} ${{ github.event_name }}
+run-name: ${{ github.ref_type }} ${{ github.ref_name }} (${{ github.event_name }})
 
 on:
   push:
