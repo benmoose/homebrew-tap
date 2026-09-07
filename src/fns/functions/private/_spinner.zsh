@@ -8,7 +8,8 @@ builtin emulate -L zsh
 [[ -t 1 ]] || return
 [[ -n "$1" ]] || return 1
 
-local -ar spinners=( $(<"{{PREFIX}}/share/fns/data/spinners.txt") )
+local -r data_spinners="$(brew --prefix fns)/share/fns/data/spinners.txt"
+local -ar spinners=( $(<"${data_spinners:a}") )
 local -ir spinner_i=$(( ${SPINNER:-RANDOM} ))
 local -ar frames=( "${(ws::)spinners[$(( spinner_i % $#spinners[@] + 1 ))]}" )
 local -r pid_arg="$1" msg_arg="${2-Thinking}" colour_arg="${3-${SPINNER_COLOUR:-$CYAN}}"
