@@ -7,11 +7,11 @@ emulate -L zsh
 0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
 
 _init() {
-	local -r func_dir="${1:h}/share/zsh/site-functions"
+	local -r func_dir="$1/zsh/site-functions"
 	if ! [[ -d "$func_dir" ]]; then
 		builtin printf \
 			"%s: installed functions not found, expect directory at %s.\nTry running '%q'\n" \
-			"${1:t}" "$func_dir" "brew reinstall fns" >&2
+			"init" "$func_dir" "brew reinstall fns" >&2
 		return 1
 	fi
 
@@ -25,8 +25,8 @@ _init() {
 {
 	[[ "${zsh_eval_context[-1]}" == "file" ]] || return 1
 
-	source "${0:h}/env.zsh"
-	_init "${0:a}"
+	source "${0:a:h}/env.zsh"
+	_init "${0:a:h:h}"
 } always {
 		unset -f _init
 }
