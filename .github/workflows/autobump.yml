@@ -3,12 +3,11 @@ name: brew bump
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    tags: ["v*.*.*"]
     paths:
       - .github/workflows/autobump.yml
-  schedule:
-    - cron: 30 13 * * *
+      - src/fns/*
 
 permissions:
   pull-requests: write
@@ -28,7 +27,7 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@c8707045ccae42888fe98e86f2ee8938bc7cc193 # 2026.08.10.1
 
-      - name: Set up git
+      - name: Set up Git
         id: git_setup
         uses: Homebrew/actions/git-user-config@c8707045ccae42888fe98e86f2ee8938bc7cc193 # 2026.08.10.1
 
