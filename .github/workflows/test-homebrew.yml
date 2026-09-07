@@ -1,10 +1,11 @@
 name: Homebrew tests
 
+run-name: ${{ github.ref_type }} ${{ github.ref_name }} (${{ github.event_name }})
+
 on:
   push:
     branches: [main]
-    paths:
-      - 'Formula/*'
+    tags: ['v*.*.*']
   pull_request:
     branches: [main]
     paths:
@@ -22,29 +23,27 @@ defaults:
 
 jobs:
   test-bot:
-    strategy:
-      matrix:
-        os: [ macos-26 ]
-        include:
-          - os: ubuntu-latest
-            container:
-              image: ghcr.io/homebrew/brew:main
-              options: --privileged
-    runs-on: ${{ matrix.os }}
-    container: ${{ fromJSON(toJSON(matrix.container)) }} # zizmor: ignore[unpinned-images]
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/homebrew/brew:main
+      options: --privileged
     name: Homebrew test-bot
     steps:
       - name: Set up Homebrew
         id: homebrew-setup
         uses: Homebrew/actions/setup-homebrew@c8707045ccae42888fe98e86f2ee8938bc7cc193 # 2026.08.10.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Cache Homebrew Bundler RubyGems
+        id: brew-cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ steps.homebrew-setup.outputs.gems-path }}
           key: ${{ matrix.os }}-rubygems-${{ steps.homebrew-setup.outputs.gems-hash }}
           restore-keys: ${{ matrix.os }}-rubygems-
+
+      - name: Install Homebrew Bundler RubyGems
+        if: steps.brew-cache.outputs.cache-hit != 'true'
+        run: brew install-bundler-gems
 
       - run: brew test-bot --only-cleanup-before
       - run: brew test-bot --only-setup

@@ -5,13 +5,10 @@ run-name: ${{ github.ref_type }} ${{ github.ref_name }} (${{ github.event_name }
 on:
   push:
     branches: [main]
-    tags: ["v*.*.*"]
-    paths:
-      - '**.zsh'
+    tags: ['v*.*.*']
   pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - '**.zsh'
+    branches: [main]
+    paths: ['**.zsh']
 
 permissions:
   contents: read
@@ -25,14 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Check Zsh syntax
     steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
       - name: Set up Homebrew
-        id: homebrew-setup
         uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Homebrew prefix
         uses: Homebrew/actions/cache-homebrew-prefix@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
         with:
@@ -40,7 +31,7 @@ jobs:
           uninstall: true
           workflow-key: ${{ github.workflow }}
       - name: Check zsh syntax
-        working-directory: ./src/fns
+        working-directory: src/fns
         run: |
           checked=0; err=0
           while read -r file; do
@@ -54,6 +45,8 @@ jobs:
   zsh-lint:
     runs-on: ubuntu-latest
     name: Lint Zsh functions
+    env:
+      RESULT_FILE: "${{ github.sha }}-${{ github.run_attempt }}.json"
     steps:
       - uses: actions/checkout@v7
         with:
@@ -61,25 +54,30 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           cache: false
-          go-version: "1.27"
+          go-version: '1.27'
       - name: Install linter
         run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
       - name: Run linter on zsh functions
         working-directory: ./src/fns
-        run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > ${{ runner.temp }}/${{ job.check_run_id }}.json
+        run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > "${{ runner.temp }}/${{ env.RESULT_FILE }}"
       - name: Linter output
         env:
           NO_COLOR: ${{ true }}
         run: |
-          out="${{ runner.temp }}/${{ job.check_run_id }}.json"
-          echo "Check **$(jq '.summary.files' "$out")** files: **$(jq '.summary.errors' "$out")** error(s)\n\n```json\n$(jq --indent 2 '.summary' "$out")\n```" >> "$GITHUB_STEP_SUMMARY"
-          n=$(jq '.diagnostics | length' "$out")
+          res="${{ runner.temp }}/${{ env.RESULT_FILE }}"
+          {
+            echo "Check **$(jq '.summary.files' $res)** functions: **$(jq '.summary.errors' $res)** error(s)"
+            echo '```json'
+            jq --indent 2 '.summary' "$res"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          n=$(jq '.diagnostics | length' "$res")
           for ((i=0; i < n; i++)); do
             [[ $(jq ".diagnostics[$i].severity") == "error" ]] || continue
-            file=$(jq ".diagnostics[$i].file" $out)
-            line=$(jq ".diagnostics[$i].range.start.line" $out)
-            endLine=$(jq ".diagnostics[$i].range.end.line" $out)
-            title=$(jq ".diagnostics[$i].rule" $out)
-            msg=$(jq ".diagnostics[$i].message" <<< $out)
+            file=$(jq ".diagnostics[$i].file" "$res")
+            line=$(jq ".diagnostics[$i].range.start.line" "$res")
+            endLine=$(jq ".diagnostics[$i].range.end.line" "$res")
+            title=$(jq ".diagnostics[$i].rule" "$res")
+            msg=$(jq ".diagnostics[$i].message" <<< "$res")
             echo "::error file=${file},line=${line},endLine=${endLine},title=${title}::${msg}"
           done
