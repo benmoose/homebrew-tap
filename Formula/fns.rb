@@ -1,8 +1,8 @@
 class Fns < Formula
   desc "Collection of useful Zsh functions"
   homepage "https://github.com/benmoose/homebrew-tap"
-  url "https://github.com/benmoose/homebrew-tap/archive/refs/tags/v0.0.4.tar.gz"
-  sha256 "cc4b47183f93075ebc68e8cf6e0ffe01f3fbfef4ee9e4f25a30ef942094c80dc"
+  url "https://github.com/benmoose/homebrew-tap/archive/refs/tags/v0.0.5.tar.gz"
+  sha256 "2625e55c26782c8f28f5a06e1caa0635acfa57a833a6aec32f06705853ff3522"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-tap.git", branch: "main"
 
