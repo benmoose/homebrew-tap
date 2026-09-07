@@ -5,13 +5,10 @@ run-name: ${{ github.ref_type }} ${{ github.ref_name }} (${{ github.event_name }
 on:
   push:
     branches: [main]
-    tags: ["v*.*.*"]
-    paths:
-      - '**.zsh'
+    tags: ['v*.*.*']
   pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - '**.zsh'
+    branches: [main]
+    paths: ['**.zsh']
 
 permissions:
   contents: read
