@@ -9,7 +9,7 @@ emulate -L zsh
 _init() {
 	local -r \
 		name="${1:t}" \
-		func_dir="${1:a:h}/share/zsh/site-functions"
+		func_dir="${1:h}/share/zsh/site-functions"
 
 	if ! [[ -d "$func_dir" ]]; then
 		builtin printf \
@@ -22,6 +22,7 @@ _init() {
 	if [[ -z "${fpath[(r)$HOMEBREW_PREFIX/share/zsh/site-functions]}" && -z "${fpath[(r)$func_dir]-}" ]]; then
 		fpath=( "${fpath[@]}" "$func_dir" )
 	fi
+
 	builtin autoload -Uz "$func_dir"/*(:t)
 }
 
