@@ -37,9 +37,8 @@ trap 'rm -f "$_err"' EXIT
 _spinner "$pid" "$msg"
 
 if ! wait "$pid" 2>/dev/null; then
-	printf "${CR}${EL}"
 	_err "${0:t}: $(<$_err)"
 	return 1
 fi
 
-printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${GREEN}%s${NS}\n" "$msg"
+printf "${BOLD}${GREEN}✓${NS} ${GREEN}%s${NS}\n" "$msg"

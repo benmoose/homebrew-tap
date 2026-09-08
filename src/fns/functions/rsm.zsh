@@ -24,8 +24,8 @@ local -r msg="reset $main_b branch to origin"
 _spinner "$pid" "$msg" "$YELLOW"
 
 if ! wait "$pid" 2>/dev/null; then
-	printf "${CR}${EL}${BOLD}${RED}✕${NS} ${RED}%s${NS}\n" "$msg"
+	printf "${BOLD}${RED}✕${NS} ${RED}%s${NS}\n" "$msg"
 	return 1
 fi
 
-printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${GREEN}%s${NS}\n" "$msg"
+printf "${BOLD}${GREEN}✓${NS} ${GREEN}%s${NS}\n" "$msg"
