@@ -20,4 +20,3 @@ trap 'kill "$pid"; return 130' INT TERM
 _spinner "$pid" "Opening on GitHub" "$GREEN"
 
 wait "$pid" 2>/dev/null
-printf "${CR}${EL}"
