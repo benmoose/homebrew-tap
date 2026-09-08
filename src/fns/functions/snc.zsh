@@ -11,12 +11,12 @@ setopt no_monitor
 } &
 local -r pid="$!"
 
-_spinner "$pid" "Checking"
+_spinner "$pid" "Comparing upstream"
 
 local -r \
-	curr_b="$(_git_current_branch)"
-head_obj="$(git rev-parse --short --verify -q HEAD)" \
-upstream_obj="$(git rev-parse --short --verify -q HEAD@{upstream})"
+	curr_b="$(_git_current_branch)" \
+	head_obj="$(git rev-parse --short --verify -q HEAD)" \
+	upstream_obj="$(git rev-parse --short --verify -q HEAD@{upstream})"
 
 if [[ "$head_obj" != "$upstream_obj" ]]; then
 	[[ "$1" == "-q" ]] || _err "✕ $curr_b diverges from upstream, $upstream_obj"

@@ -33,5 +33,6 @@ local -i t
 		((t++))
 	done
 } always {
+	printf "${CR}${EL}"
 	\tput cnorm
 }
