@@ -5,13 +5,8 @@ run-name: ${{ github.ref_type }} ${{ github.ref_name }} (${{ github.event_name }
 on:
   push:
     branches: [main]
-    tags: ['v*.*.*']
   pull_request:
     branches: [main]
-    paths: ['**.zsh']
-
-permissions:
-  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
