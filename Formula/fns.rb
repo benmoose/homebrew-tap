@@ -1,5 +1,5 @@
 class Fns < Formula
-  desc "Collection of useful Zsh functions"
+  desc "Collection of custom Zsh functions"
   homepage "https://github.com/benmoose/homebrew-tap"
   url "https://github.com/benmoose/homebrew-tap/archive/refs/tags/v0.0.10.tar.gz"
   sha256 "3a3432dc4cff76cb864a05e5af79435276a0d4c350302d5810f50bc4fcefabdb"

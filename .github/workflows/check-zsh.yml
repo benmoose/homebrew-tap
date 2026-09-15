@@ -1,4 +1,4 @@
-name: Check Zsh syntax
+name: Zsh
 
 run-name: ${{ github.ref_type }} ${{ github.ref_name }} (${{ github.event_name }})
 
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   zsh-check:
     runs-on: ubuntu-latest
-    name: Check Zsh syntax
+    name: Check syntax
     steps:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
@@ -39,7 +39,7 @@ jobs:
 
   zsh-lint:
     runs-on: ubuntu-latest
-    name: Lint Zsh functions
+    name: Check linter
     env:
       RESULT_FILE: "${{ github.sha }}-${{ github.run_attempt }}.json"
     steps:
@@ -55,7 +55,7 @@ jobs:
       - name: Run linter on zsh functions
         working-directory: ./src
         run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > "${{ runner.temp }}/${{ env.RESULT_FILE }}"
-      - name: Linter output
+      - name: Check result ok
         env:
           NO_COLOR: ${{ true }}
         run: |

@@ -1,4 +1,3 @@
-# brew tap-new uses this file to generate an autobump workflow for the new tap
 name: Bump Homebrew Formulae
 
 run-name: ${{ github.ref_type }} ${{ github.ref_name }} (${{ github.event_name }})
