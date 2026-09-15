@@ -9,7 +9,7 @@ on:
     tags: ["v*.*.*"]
     paths:
       - .github/workflows/autobump.yml
-      - src/fns/*
+      - src/*
 
 permissions:
   contents: write

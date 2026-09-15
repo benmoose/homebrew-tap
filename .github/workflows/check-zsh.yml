@@ -26,7 +26,7 @@ jobs:
           uninstall: true
           workflow-key: ${{ github.workflow }}
       - name: Check zsh syntax
-        working-directory: src/fns
+        working-directory: ./src
         run: |
           checked=0; err=0
           while read -r file; do
@@ -53,7 +53,7 @@ jobs:
       - name: Install linter
         run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
       - name: Run linter on zsh functions
-        working-directory: ./src/fns
+        working-directory: ./src
         run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > "${{ runner.temp }}/${{ env.RESULT_FILE }}"
       - name: Linter output
         env:
