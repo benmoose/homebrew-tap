@@ -12,6 +12,7 @@ on:
       - src/*
 
 permissions:
+  actions: write
   contents: write
   packages: read
   pull-requests: write
