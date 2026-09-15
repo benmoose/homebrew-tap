@@ -6,9 +6,10 @@ Homebrew installation:
 
 ```sh
 brew install benmoose/tap/fns
+# Or
+brew tap benmoose/tap
+brew install fns
 ```
-
-Or `brew tap benmoose/tap` and then `brew install fns`.
 
 Or, in a `brew bundle` `Brewfile`:
 
@@ -16,11 +17,6 @@ Or, in a `brew bundle` `Brewfile`:
 tap "benmoose/tap"
 brew "fns"
 ```
-
-## Documentation
-
-`brew help`, `man brew` or check [Homebrew's documentation](https://docs.brew.sh).
-
 
 ## Contributing
 
