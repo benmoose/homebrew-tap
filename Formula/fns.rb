@@ -1,5 +1,5 @@
 class Fns < Formula
-  desc "Collection of useful Zsh functions"
+  desc "Collection of custom Zsh functions"
   homepage "https://github.com/benmoose/homebrew-tap"
   url "https://github.com/benmoose/homebrew-tap/archive/refs/tags/v0.0.10.tar.gz"
   sha256 "3a3432dc4cff76cb864a05e5af79435276a0d4c350302d5810f50bc4fcefabdb"
@@ -14,10 +14,10 @@ class Fns < Formula
   def install
     prefix.install_metafiles
 
-    pkgshare.install "src/fns/env.zsh", "src/fns/init.zsh", "src/fns/data"
+    pkgshare.install "src/env.zsh", "src/init.zsh", "src/data"
     prefix.install_symlink pkgshare/"init.zsh"
 
-    zsh_function.install Dir["src/fns/functions/*.zsh", "src/fns/functions/private/*.zsh"]
+    zsh_function.install Dir["src/functions/*.zsh", "src/functions/private/*.zsh"]
       .to_h { |path| [path, path.delete_suffix(".zsh").split("/").last] }
   end
 
