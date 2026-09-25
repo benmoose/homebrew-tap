@@ -28,4 +28,4 @@ if ! wait "$pid" 2>/dev/null; then
 	return 1
 fi
 
-printf "${BOLD}${GREEN}✓${NS} ${GREEN}%s${NS}\n" "$msg"
+printf "${BOLD}${GREEN}✓$NS %s\n" "$msg"
