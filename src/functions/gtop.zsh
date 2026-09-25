@@ -6,4 +6,5 @@ set -o pipefail
 
 if ! _git_repo; then return 1; fi
 
-git log --format=format: --name-only --since="1 year ago" | sort | uniq -c | sort -nr | head -20
+git log --format=format: --name-only --since="1 year ago" |
+	sed '/^[[:space:]]*$/d' | sort | uniq -c | sort -nr | head -20
