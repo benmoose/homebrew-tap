@@ -3,6 +3,7 @@
 # The environment variable `SPINNER` selects the spinners.txt line number to use
 # for the animation. If unset then a line is randomly chosen. SPINNER_COLOUR sets
 # the animation colour.
+
 builtin emulate -L zsh
 
 [[ -t 1 ]] || return

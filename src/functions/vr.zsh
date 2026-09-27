@@ -1,4 +1,5 @@
-# vr [<branch>] - View the repository on GitHub.
+# vr [<branch>] - View the repository on GitHub
+
 builtin emulate -L zsh
 
 if ! _git_repo; then return 1; fi

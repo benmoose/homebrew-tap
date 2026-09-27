@@ -15,7 +15,8 @@ fi
 setopt no_monitor
 
 () {
-	git fetch --quiet && git rebase --quiet "origin/${main_b}"
+	git fetch -q &&
+		git rebase -q "origin/${main_b}"
 } &
 local -r pid="${!}"
 trap 'kill "${pid}"; return 130' INT TERM

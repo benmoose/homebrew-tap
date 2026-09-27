@@ -7,7 +7,7 @@ if ! _git_repo; then return 1; fi
 local -r main_b="$(_git_main_branch)"
 
 setopt no_monitor
-git fetch --atomic --no-tags --quiet origin "$main_b" &
+git fetch -q --atomic --no-tags origin "$main_b" &
 local pid="$!"
 
 _spinner "$pid" "Fetching origin..."

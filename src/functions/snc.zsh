@@ -1,4 +1,4 @@
-# gsy - (git-sync) Compare to branch at remote.
+# gsy - (git-sync) Compare to branch at remote
 
 builtin emulate -L zsh
 set -o pipefail
@@ -7,7 +7,7 @@ if ! _git_repo; then return 1; fi
 
 setopt no_monitor
 
-git fetch --no-auto-gc --no-tags --quiet origin &
+git fetch -q --no-auto-gc --no-tags origin &
 local -r pid="$!"
 trap 'kill "$pid"; rm -f "$_err"; return 130' INT TERM
 
